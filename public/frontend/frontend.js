@@ -31,7 +31,11 @@ async function main() {
     });
     location.reload();
   }
-
+  document.getElementById("logout-btn").addEventListener("click", logout);
+  function logout(){
+      console.log("jello world")
+    // localStorage.clear();
+  }
 
   let deleteBtn = document.querySelectorAll(".deleteBtn")
   function deleteTodo(event){

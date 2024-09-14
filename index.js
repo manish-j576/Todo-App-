@@ -1,13 +1,16 @@
 console.log(" backend script started")
 const cors = require('cors');
 const express = require("express");
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = "ManishJoshi123";
 
 const fs = require("fs");
+const { dirname } = require('path');
 
 const app = express();
 
 let data = JSON.parse(fs.readFileSync("todo.json", "utf-8"));
-
+let user = []
 app.use(express.json())
 app.use(express());
 app.use(cors());
@@ -93,11 +96,100 @@ let deleteItem = function (req, res) {
     }
   }
 };
+function signup(req,res){
+  const username = req.body.username;
+  const password = req.body.password;
+  let foundUser = user.find(i=>i.username === username)
+  if(foundUser){
+    res.send("user exist")
+  }
+  else{
+    user.push({
+      username,
+      password
+    })
+    res.send({
+      messege: "user created"
+
+
+    })
+  }
+
+}
+
+function signin(req,res){
+  console.log("signin form backend")
+  const username = req.body.username;
+  const password = req.body.password;
+  let foundUser = user.find(i=>i.username === username)
+  console.log("Inside password"+foundUser)
+  if(foundUser.password===password)
+  {
+    const token=jwt.sign(username,JWT_SECRET)
+    res.send({
+      token
+    })
+  }
+  else{
+    res.send({
+      "messege":"invalid Credentials"
+    })
+  }
+}
+function auth(req,res,next){
+  const token = req.header.token;
+  console.log(token)
+  const username=jwt.verify(token,JWT_SECRET)
+
+}
+app.post("/signup",signup);
+app.post("/signin",signin);
+app.get("/home",function (req,res){
+
+  console.log("home end point")
+  try{
+
+    const token = req.headers.token;
+    console.log(token)
+    const username=jwt.verify(token,JWT_SECRET)
+    let foundUser= user.find(u=>u.username===username)
+  }
+  catch(err){
+    res.send({
+      "messege":"Invalid token"
+    })
+  }
+  if(foundUser){
+    
+    console.log(username)
+    res.sendFile(__dirname+"/public/frontend/Home.html")
+  }
+
+
+  else{
+    res.send({
+      "messege":"Invalid token"
+    })
+  }
+
+
+
+
+
+
+
+
+
+})
+
 
 app
-  .post("/", create)
-  .get("/", read)
-  .put("/", update)
-  .delete("/", deleteItem);
+  .post("/create", create)
+  .get("/todo", read)
+  .put("/update", update)
+  .delete("/delete", deleteItem);
 
 app.listen(8080);
+
+
+

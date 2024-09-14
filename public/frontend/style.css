@@ -10,6 +10,7 @@ body{
     font-family: "Open Sans", sans-serif;
     
     display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 .container{
@@ -76,4 +77,18 @@ body{
         display: flex;
         width: 40px;
     }
-
+    .welcome{
+        width: 100%;
+        float :left;
+        display: flex;
+        color: white;
+    }
+#logout-btn{
+    width: 10%;
+    padding: 10px;
+    background: rgb(208, 206, 232);
+}
+#username{
+    width: 90%;
+    padding: 10px;
+}
